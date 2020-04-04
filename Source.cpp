@@ -18,6 +18,8 @@ int main(int argc, char* argv[]) {
 	TTF_Init();
 	TTF_Font* font = TTF_OpenFont("OpenSans-Light.ttf", 16);
 
+	SDL_Init(SDL_INIT_VIDEO);
+
 	FontController::mFont = font;
 
 	Menu m1(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
@@ -76,6 +78,7 @@ int main(int argc, char* argv[]) {
 	//SDL_Point p;
 	SDL_Rect r;
 	std::vector<SDL_Point> hits;
+	bool mouseMotion = false;
 
 	while (!quit) {
 		while (SDL_PollEvent(&e) != NULL) {
@@ -96,12 +99,13 @@ int main(int argc, char* argv[]) {
 					break;
 				}
 			}
+			if (e.type == SDL_MOUSEMOTION) {
+				SDL_GetMouseState(&m.x, &m.y);
+				rayCaster.setPos(m.x, m.y);
+				rayCaster.clear();
+				mouseMotion = true;
+			}
 		}
-
-		
-		SDL_GetMouseState(&m.x, &m.y);
-		rayCaster.setPos(m.x, m.y);
-		rayCaster.clear();
 
 		geometry = GeometryController::getRects();
 
@@ -120,18 +124,24 @@ int main(int argc, char* argv[]) {
 		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 		SDL_RenderFillRect(renderer, &r);
 
-		rayCaster.cast(360);
+		if (mouseMotion) {
+
+			rayCaster.cast(360);
+			
+			mouseMotion = false;
+		}
+
 		hits = rayCaster.getRayHits();
 
 		for (int i = 0; i < hits.size(); i++) {
 			p = hits[i];
-			r = { p.x, p.y, 5, 5 };
+			r = { p.x, p.y, 1, 1 };
 			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+			SDL_RenderDrawLine(renderer, rayCaster.getPos().x, rayCaster.getPos().y, p.x, p.y);
+			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 			SDL_RenderFillRect(renderer, &r);
 			//printf("drew rect at x %d y %d\n", p.x, p.y);
 		}
-
-		//m1.draw();
 
 		hits.clear();
 

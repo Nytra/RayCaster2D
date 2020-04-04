@@ -50,17 +50,35 @@ void RayCaster::cast(int nRays) {
 				}
 			}
 			if (!collides) {
-				rayEnd.x = (double)rayEnd.x + 10.0 * sin(rad);
-				rayEnd.y = (double)rayEnd.y + 10.0 * -cos(rad);
+				rayEnd.x = (double)rayEnd.x + 15.0 * sin(rad);
+				rayEnd.y = (double)rayEnd.y + 15.0 * -cos(rad);
 			}
+
+			for (int i = 0; i < getNumRects(); i++) {
+				if (SDL_PointInRect(&rayEnd, &geometry[i])) {
+					//printf("collision with wall at x %d y %d\n", rayEnd.x, rayEnd.y);
+					//collides = true;
+					//addRayHit(&rayEnd);
+					//break;
+					while (SDL_PointInRect(&rayEnd, &geometry[i])) { // go back along the line until not intersecting with the wall
+						rayEnd.x = (double)rayEnd.x - 5.0 * sin(rad);
+						rayEnd.y = (double)rayEnd.y - 5.0 * -cos(rad);
+					}
+					rayEnd.x = (double)rayEnd.x + 5.0 * sin(rad);
+					rayEnd.y = (double)rayEnd.y + 5.0 * -cos(rad);
+					break;
+				}
+			}
+
 			// if point exits window, break
 			if ((rayEnd.x < 0 || rayEnd.x >= mScreenWidth) || (rayEnd.y < 0 || rayEnd.y >= mScreenHeight)) {
 				//goto end;
+				addRayHit(&rayEnd);
 				break; // trust that collides is always false in here
 			}
-			debug = { rayEnd.x, rayEnd.y, 1, 1 };
-			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-			SDL_RenderFillRect(renderer, &debug);
+			//debug = { rayEnd.x, rayEnd.y, 1, 1 };
+			//SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
+			//SDL_RenderFillRect(renderer, &debug);
 			//SDL_RenderPresent(renderer);
 			//SDL_Delay(5);
 			//printf("ray at x %d y %d\n", rayEnd.x, rayEnd.y);
