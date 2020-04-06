@@ -5,7 +5,7 @@ FLAWLESS RAYCASTING! BY THE POWER OF MATH!
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycastingBest1.gif)
 
 If you want to try this for yourself, download the repo and run "MenuFramework.exe" (i forgot to change the name)
-Then just use your mouse or trackpad to move the raycaster object around on the screen. The walls are randomly generated at runtime.
+Then just use your mouse or trackpad to move the raycaster object around on the screen. The walls are randomly generated at runtime. You can press P to regenerate them (although the blue square may get stuck inside one)
 
 Here you can see the exact line-intersect geometry code that the raycaster now uses. It took me a while to set this up and I still don't fully understand it really. I borrowed this from here https://stackoverflow.com/a/1968345
 
