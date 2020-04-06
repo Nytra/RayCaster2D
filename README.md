@@ -9,6 +9,8 @@ Then just use your mouse or trackpad to move the raycaster object around on the 
 
 Here you can see the exact line-intersect geometry code that the raycaster now uses. It took me a while to set this up and I still don't fully understand it really. I borrowed this from here https://stackoverflow.com/a/1968345
 
+The function takes four points (a, b, c, d) as inputs. ab and cd are the two lines.
+
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/geometrycode.PNG)
 
 Below are some gifs recorded at various stages of development. You can see the different techniques that I used throughout. Only the above gif demonstrates the use of actual line-intersect geometry.
