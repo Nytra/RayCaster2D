@@ -97,6 +97,8 @@ void RayCaster::cast(int nRays) {
 			intersection = lineIntersect(rayStart, rayEnd, bottomLeft, bottomRight);
 			if (intersection.x != -1 && intersection.y != -1) {
 				//addRayHit(&intersection);
+				intersection.x -= 1; // because had some odd hit detection issues on right side and bottom side of target
+				intersection.y -= 1;
 				if (hasIntersected && sqrt(pow(intersection.x - rayStart.x, 2) + pow(intersection.y - rayStart.y, 2)) < sqrt(pow(intersections[intersections.size() - 1].x - rayStart.x, 2) + pow(intersections[intersections.size() - 1].y - rayStart.y, 2))) {
 					intersections[intersections.size() - 1] = intersection;
 				}
@@ -109,6 +111,8 @@ void RayCaster::cast(int nRays) {
 			intersection = lineIntersect(rayStart, rayEnd, topRight, bottomRight);
 			if (intersection.x != -1 && intersection.y != -1) {
 				//addRayHit(&intersection);
+				intersection.x -= 1; // because had some odd hit detection issues on right side and bottom side of target
+				intersection.y -= 1;
 				if (hasIntersected && sqrt(pow(intersection.x - rayStart.x, 2) + pow(intersection.y - rayStart.y, 2)) < sqrt(pow(intersections[intersections.size() - 1].x - rayStart.x, 2) + pow(intersections[intersections.size() - 1].y - rayStart.y, 2))) {
 					intersections[intersections.size() - 1] = intersection;
 				}

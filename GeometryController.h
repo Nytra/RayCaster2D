@@ -12,5 +12,6 @@ public:
 	static int mNumRects;
 	static int mScreenWidth;
 	static int mScreenHeight;
+	void clear();
 };
 

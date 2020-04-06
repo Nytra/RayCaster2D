@@ -53,6 +53,17 @@ void placeNoCollide(T& obj) {
 	obj.y = r.y;
 }
 
+void regenWalls(SDL_Rect* walls) {
+	//SDL_Rect walls[WALL_COUNT];
+	for (int i = 0; i < WALL_COUNT; i++) {
+		walls[i].w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
+		walls[i].h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
+		walls[i].x = rand() % (SCREEN_WIDTH - walls[i].w);
+		walls[i].y = rand() % (SCREEN_HEIGHT - walls[i].h);
+		//GeometryController::addRect(&walls[i]);
+	}
+}
+
 int main(int argc, char* argv[]) {
 	srand((unsigned)time(NULL));
 
@@ -83,11 +94,12 @@ int main(int argc, char* argv[]) {
 	int optionSelected = 0;
 
 	SDL_Rect walls[WALL_COUNT];
+	regenWalls(walls);
 	for (int i = 0; i < WALL_COUNT; i++) {
-		walls[i].w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
-		walls[i].h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
-		walls[i].x = rand() % (SCREEN_WIDTH - walls[i].w);
-		walls[i].y = rand() % (SCREEN_HEIGHT - walls[i].h);
+		//walls[i].w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
+		//walls[i].h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
+		//walls[i].x = rand() % (SCREEN_WIDTH - walls[i].w);
+		//walls[i].y = rand() % (SCREEN_HEIGHT - walls[i].h);
 		GeometryController::addRect(&walls[i]);
 	}
 
@@ -150,6 +162,9 @@ int main(int argc, char* argv[]) {
 					//m1.moveCursor(1);
 					printf("down\n");
 					break;
+				case SDLK_p:
+					regenWalls(walls);
+					break;
 				default:
 					break;
 				}
@@ -207,6 +222,11 @@ int main(int argc, char* argv[]) {
 			}
 			else {
 				//target = { target.x + 2, target.y + 2, target.w - 2, target.h - 2 };
+				//p.x -= 1;
+				//p.y -= 1;
+				//if (SDL_PointInRect(&p, &target)) {
+					//placeNoCollide(target);
+				//}
 			}
 		}
 

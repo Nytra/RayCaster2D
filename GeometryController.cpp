@@ -13,6 +13,10 @@ std::vector<SDL_Rect*> GeometryController::getRects() {
 	return GeometryController::mRects;
 }
 
+void GeometryController::clear() {
+	GeometryController::mRects.clear();
+}
+
 std::vector<SDL_Rect*> GeometryController::mRects{};
 int GeometryController::mNumRects = 0;
 int GeometryController::mScreenHeight = 0;
