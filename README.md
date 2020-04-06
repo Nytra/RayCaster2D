@@ -11,7 +11,7 @@ Here you can see the exact line-intersect geometry code that the raycaster now u
 
 The function takes four points (a, b, c, d) as inputs. ab and cd are the two lines.
 
-ab will always be the ray line. cd will always be one of the four sides of a rectangle. this is repeated for every rectangle in the scene, and then there is a bit of code that picks the closest point of intersection to the start of the ray (for each ray casted).
+ab will always be the ray line. cd will always be one of the four sides of a rectangle. this is repeated for every rectangle in the scene, and then there is a bit of code that picks the closest point of intersection to the start of the ray (for each ray casted per frame).
 
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/geometrycode.PNG)
 
