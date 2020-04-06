@@ -1,13 +1,14 @@
 #pragma once
 #include <SDL.h>
+#include <vector>
 
 class GeometryController
 {
 public:
-	static SDL_Rect* getRects();
+	static std::vector<SDL_Rect*> getRects();
 	static int getNumRects();
 	static void addRect(SDL_Rect* r);
-	static SDL_Rect* mRects;	
+	static std::vector<SDL_Rect*> mRects;	
 	static int mNumRects;
 	static int mScreenWidth;
 	static int mScreenHeight;
