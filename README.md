@@ -1,6 +1,6 @@
 # SDL2_2D_RayCaster
 
-FLAWLESS RAYCASTING!
+FLAWLESS RAYCASTING! BY THE POWER OF MATH!
 
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycastingBest1.gif)
 
