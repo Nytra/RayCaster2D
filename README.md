@@ -4,6 +4,10 @@ FLAWLESS RAYCASTING! BY THE POWER OF MATH!
 
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycastingBest1.gif)
 
+![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycastingDark1.gif)
+
+![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycastingDark2.gif)
+
 If you want to try this for yourself, download the repo and run "MenuFramework.exe" (i forgot to change the name)
 Then just use your mouse or trackpad to move the raycaster object around on the screen. The walls are randomly generated at runtime. You can press P to regenerate them (although the blue square may get stuck inside one)
 
@@ -15,7 +19,7 @@ ab will always be the ray line. cd will always be one of the four sides of a rec
 
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/geometrycode.PNG)
 
-Below are some gifs recorded at various stages of development. You can see the different techniques that I used throughout. Only the above gif demonstrates the use of actual line-intersect geometry.
+Below are some gifs recorded at various stages of development. You can see the different techniques that I used throughout. Only the above gifs demonstrate the use of actual line-intersect geometry.
 
 ![Demo](https://github.com/Nytra/SDL2_2D_RayCaster/blob/master/raycasting1.gif)
 
