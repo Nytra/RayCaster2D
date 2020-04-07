@@ -6,12 +6,12 @@ class GeometryController
 {
 public:
 	static std::vector<SDL_Rect*> getRects();
-	static int getNumRects();
+	static unsigned short getNumRects();
 	static void addRect(SDL_Rect* r);
 	static std::vector<SDL_Rect*> mRects;	
-	static int mNumRects;
-	static int mScreenWidth;
-	static int mScreenHeight;
+	static unsigned short mNumRects;
+	static unsigned short mScreenWidth;
+	static unsigned short mScreenHeight;
 	void clear();
 };
 

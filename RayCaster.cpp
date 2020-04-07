@@ -1,19 +1,19 @@
 #include "RayCaster.h"
 
-RayCaster::RayCaster(int x, int y) {
+RayCaster::RayCaster(unsigned short x, unsigned short y) {
 	mX = x;
 	mY = y;
 	mRayHits.clear();
 	//lineIntersect(SDL_Point{ 0,0 }, SDL_Point{ 10,10 }, SDL_Point{ 0,10 }, SDL_Point{ 10,0 });
 }
 
-void RayCaster::setPos(int x, int y) {
+void RayCaster::setPos(unsigned short x, unsigned short y) {
 	mX = x;
 	mY = y;
 }
 
 void RayCaster::addRayHit(SDL_Point p) {
-	mRayHits.push_back(p);
+	mRayHits.emplace_back(p);
 	//printf("adding ray hit x %d y %d\n", p->x, p->y);
 }
 
@@ -24,30 +24,32 @@ SDL_Point RayCaster::getPos() {
 	return p;
 }
 
-void RayCaster::cast(int nRays) {
-	int interval = 360.0 / nRays;
+void RayCaster::cast(unsigned short nRays) {
+	float interval = 360.0 / nRays;
 	//std::vector<SDL_Rect> geometry = getRects();
 	SDL_Point rayStart;
 	SDL_Point rayEnd;
 	SDL_Point intersection;
 	//bool collides;
 	//SDL_Rect debug;
-	double rad;
-	const int rayLength = 10000;
+	float rad;
+	const unsigned short rayLength = sqrt(pow(mScreenWidth, 2) + pow(mScreenHeight, 2));
 
 	SDL_Point bottomLeft, bottomRight, topRight, topLeft;
 	SDL_Rect r;
 
 	std::vector<SDL_Point> intersections;
 
-	double shortestDistance;
-	int shortestIndex = 0;
-	double distance;
+	float shortestDistance;
+	unsigned short shortestIndex = 0;
+	float distance;
 
 	bool hasIntersected;
 
+	clear();
+
 	//printf("casting...\n");
-	for (double a = 0; a < 360; a += interval) {
+	for (float a = 0; a < 360; a += interval) {
 		//printf("casting ray at angle %d\n", a);
 		// cast a ray in this direction
 		rayStart.x = mX;
@@ -57,8 +59,8 @@ void RayCaster::cast(int nRays) {
 		rad = a * 3.14 / 180.0;
 		shortestDistance = 99999;
 
-		rayEnd.x = (double)rayStart.x + rayLength * sin(rad);
-		rayEnd.y = (double)rayStart.y + rayLength * -cos(rad); // we now have a line defined by two points (mX, mY) and (rayEnd.x, rayEnd.y)
+		rayEnd.x = (float)rayStart.x + rayLength * sin(rad);
+		rayEnd.y = (float)rayStart.y + rayLength * -cos(rad); // we now have a line defined by two points (mX, mY) and (rayEnd.x, rayEnd.y)
 
 		//addRayHit(rayEnd);
 
@@ -199,7 +201,7 @@ void RayCaster::clear() {
 
 SDL_Point RayCaster::lineIntersect(SDL_Point a, SDL_Point b, SDL_Point c, SDL_Point d) {
 	SDL_Point intersection;
-	double s1x, s2x, s1y, s2y, s, t, denom;
+	float s1x, s2x, s1y, s2y, s, t, denom;
 
 	//printf("a: x %d y %d\nb: x %d y %d\nc: x %d y %d\nd: x %d y %d\n", 
 		//a.x, a.y,

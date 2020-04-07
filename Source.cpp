@@ -10,9 +10,48 @@
 #include "RayCaster.h"
 #include "Menu.h"
 
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
+#define SCREEN_WIDTH GeometryController::mScreenWidth
+#define SCREEN_HEIGHT GeometryController::mScreenHeight
+
 const int WALL_COUNT = 100;
+const int WALL_TIMEOUT = 10000;
+
+template<typename T>
+struct Record {
+	Uint32 time;
+	T val;
+	Record(T _val) {
+		time = SDL_GetTicks();
+		val = _val;
+	}
+};
+
+struct Vec3 {
+	float x, y, z;
+
+	Vec3 operator+(const Vec3& v) {
+		Vec3 res;
+		res.x = x + v.x;
+		res.y = y + v.y;
+		res.z = z + v.z;
+		return res;
+	}
+
+	// dot product
+	float operator* (const Vec3& v) {
+		float res;
+		res = x * v.x + y * v.y + z * v.z;
+		return res;
+	}
+
+	Vec3 cross (const Vec3& v) {
+		Vec3 res;
+		res.x = y * v.z - z * v.y;
+		res.y = z * v.x - x * v.z;
+		res.z = x * v.y - y * v.x;
+		return res;
+	}
+};
 
 template<typename T>
 void placeNoCollide(T& obj) {
@@ -33,8 +72,6 @@ void placeNoCollide(T& obj) {
 		r.h = 1;
 	}
 
-	//printf("entering loop\n");
-
 	while (true) {
 		good = true;
 		for (int i = 0; i < GeometryController::getNumRects(); i++) {
@@ -53,14 +90,12 @@ void placeNoCollide(T& obj) {
 	obj.y = r.y;
 }
 
-void regenWalls(SDL_Rect* walls) {
-	//SDL_Rect walls[WALL_COUNT];
+void regenWalls() {
 	for (int i = 0; i < WALL_COUNT; i++) {
-		walls[i].w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
-		walls[i].h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
-		walls[i].x = rand() % (SCREEN_WIDTH - walls[i].w);
-		walls[i].y = rand() % (SCREEN_HEIGHT - walls[i].h);
-		//GeometryController::addRect(&walls[i]);
+		GeometryController::getRects()[i]->w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
+		GeometryController::getRects()[i]->h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
+		GeometryController::getRects()[i]->x = rand() % (SCREEN_WIDTH - GeometryController::getRects()[i]->w);
+		GeometryController::getRects()[i]->y = rand() % (SCREEN_HEIGHT - GeometryController::getRects()[i]->h);
 	}
 }
 
@@ -74,14 +109,6 @@ int main(int argc, char* argv[]) {
 
 	FontController::mFont = font;
 
-	//Menu m1(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-	//m1.addOption("Option 1");
-	//m1.addOption("Option 2");
-	//m1.addOption("Option 3");
-	//m1.addOption("Option 4");
-	//m1.addOption("Option 5");
-	//m1.addOption("Option 6");
-
 	SDL_Event e;
 	bool quit = false;
 
@@ -91,61 +118,41 @@ int main(int argc, char* argv[]) {
 
 	RenderController::renderer = renderer;
 
-	int optionSelected = 0;
+	//int optionSelected = 0;
 
-	SDL_Rect walls[WALL_COUNT];
-	regenWalls(walls);
+	GeometryController::mRects.reserve(WALL_COUNT);
+
 	for (int i = 0; i < WALL_COUNT; i++) {
-		//walls[i].w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
-		//walls[i].h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
-		//walls[i].x = rand() % (SCREEN_WIDTH - walls[i].w);
-		//walls[i].y = rand() % (SCREEN_HEIGHT - walls[i].h);
-		GeometryController::addRect(&walls[i]);
+		SDL_Rect* r = new SDL_Rect;
+
+		r->w = (rand() % (int)(SCREEN_WIDTH * 0.1)) + 20;
+		r->h = (rand() % (int)(SCREEN_HEIGHT * 0.1)) + 20;
+		r->x = rand() % (SCREEN_WIDTH - r->w);
+		r->y = rand() % (SCREEN_HEIGHT - r->h);
+
+		GeometryController::addRect(r);
 	}
 
-	/*for (int i = 0; i < WALL_COUNT; i++) {
-		printf("wall %d x %d y %d w %d h %d\n", i,
-			GeometryController::getRects()[i].x, GeometryController::getRects()[i].y,
-			GeometryController::getRects()[i].w, GeometryController::getRects()[i].h);
-	}*/
+	unsigned short x = SCREEN_WIDTH / 2;
+	unsigned short y = SCREEN_HEIGHT / 2;
 
-	GeometryController::mScreenHeight = SCREEN_HEIGHT;
-	GeometryController::mScreenWidth = SCREEN_WIDTH;
+	RayCaster rayCaster;
+	SDL_Point m{SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2};
 
-	//std::vector<SDL_Rect> geometry;
-
-	int x = SCREEN_WIDTH / 2;
-	int y = SCREEN_HEIGHT / 2;
-	SDL_Point p{ x, y };
-	/*bool good;
-	while (true) {
-		good = true;
-		for (int i = 0; i < GeometryController::getNumRects(); i++) {
-			if (SDL_PointInRect(&p, &GeometryController::getRects()[i])) {
-				p.x = rand() % SCREEN_WIDTH;
-				p.y = rand() % SCREEN_HEIGHT;
-				good = false;
-				break;
-			}
-		}
-		if (good) {
-			break;
-		}
-	}*/
-	placeNoCollide(p);
-	RayCaster rayCaster(p.x, p.y);
-	SDL_Point m;
-	//SDL_Point p;
-	SDL_Rect r;
 	std::vector<SDL_Point> hits;
 	bool mouseMotion = false;
 
 	SDL_Rect target{ rand() % SCREEN_WIDTH, rand() % SCREEN_HEIGHT, 10, 10 };
 	placeNoCollide(target);
 
-	//printf("placed target\n");
-
 	GeometryController::addRect(&target);
+
+	bool mouseInsideWall = false;
+
+	bool drawWalls = true;
+	bool found;
+
+	Uint32 lastShakeTime = SDL_GetTicks();
 
 	while (!quit) {
 		while (SDL_PollEvent(&e) != NULL) {
@@ -163,7 +170,11 @@ int main(int argc, char* argv[]) {
 					printf("down\n");
 					break;
 				case SDLK_p:
-					regenWalls(walls);
+					regenWalls();
+					rayCaster.cast(360);
+					break;
+				case SDLK_w:
+					drawWalls = !drawWalls;
 					break;
 				default:
 					break;
@@ -171,72 +182,74 @@ int main(int argc, char* argv[]) {
 			}
 			if (e.type == SDL_MOUSEMOTION) {
 				SDL_GetMouseState(&m.x, &m.y);
-				rayCaster.setPos(m.x, m.y);
-				rayCaster.clear();
-				mouseMotion = true;
+				mouseInsideWall = false;
+				
+				for (int i = 0; i < WALL_COUNT; i++) {
+					GeometryController::getRects()[i]->w += 1;
+					GeometryController::getRects()[i]->h += 1;
+
+					if (SDL_PointInRect(&m, GeometryController::getRects()[i])) {
+						mouseInsideWall = true;
+					}
+					
+					GeometryController::getRects()[i]->w -= 1;
+					GeometryController::getRects()[i]->h -= 1;
+
+					if (mouseInsideWall) {
+						break;
+					}
+				}
+
+				if (!mouseInsideWall) {
+					rayCaster.setPos(m.x, m.y);
+					mouseMotion = true;
+				}
 			}
 		}
-
-		//geometry = GeometryController::getRects();
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 		SDL_RenderClear(renderer);
 
-		SDL_SetRenderDrawColor(renderer, 64, 64, 64, 255);
-		for (int i = 0; i < WALL_COUNT; i++) {
-			SDL_RenderFillRect(renderer, GeometryController::getRects()[i]);
-		}
-
-		//geometry = nullptr;
-
-		p = rayCaster.getPos();
-		r = { p.x, p.y, 4, 4 };
 		SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-		SDL_RenderFillRect(renderer, &r);
+		SDL_RenderDrawPoint(renderer, rayCaster.getPos().x, rayCaster.getPos().y);
 
 		if (mouseMotion) {
-
 			rayCaster.cast(360);
-			
 			mouseMotion = false;
+		}
+		else if (!mouseInsideWall && SDL_GetTicks() - lastShakeTime > 200){
+			//rayCaster.setPos(m.x + (rand() % 3) - 1, m.y + (rand() % 3) - 1);
+			//rayCaster.cast(360);
+			//lastShakeTime = SDL_GetTicks();
 		}
 
 		SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
 		SDL_RenderFillRect(renderer, &target);
 
-		hits = rayCaster.getRayHits();
+		for (int i = 0; i < rayCaster.getRayHits().size(); i++) {
 
-		for (int i = 0; i < hits.size(); i++) {
-			p = hits[i];
-			r = { p.x, p.y, 1, 1 };
-			SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+			SDL_Point p = rayCaster.getRayHits()[i];
+
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			SDL_RenderDrawLine(renderer, rayCaster.getPos().x, rayCaster.getPos().y, p.x, p.y);
-			SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-			SDL_RenderFillRect(renderer, &r);
-			//printf("drew rect at x %d y %d\n", p.x, p.y);
-			//target = { target.x - 2, target.y - 2, target.w + 2, target.h + 2 };
+			SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			SDL_RenderDrawPoint(renderer, p.x, p.y);
+
 			if (SDL_PointInRect(&p, &target)) {
-				//printf("raycaster hit target at pos x %d y %d\n", p.x, p.y);
-				//target = { target.x + 2, target.y + 2, target.w - 2, target.h - 2 };
 				placeNoCollide(target);
 			}
-			else {
-				//target = { target.x + 2, target.y + 2, target.w - 2, target.h - 2 };
-				//p.x -= 1;
-				//p.y -= 1;
-				//if (SDL_PointInRect(&p, &target)) {
-					//placeNoCollide(target);
-				//}
+
+		}
+
+		if (drawWalls) {
+			SDL_SetRenderDrawColor(renderer, 64, 64, 64, 255);
+			for (int j = 0; j < WALL_COUNT; j++) {
+				SDL_RenderFillRect(renderer, GeometryController::getRects()[j]);
 			}
 		}
 
-		hits.clear();
-
 		SDL_RenderPresent(renderer);
 
-		//printf("%d\n", GeometryController::getNumRects());
-
-		//SDL_Delay(1000);
 	}
 
 	return 0;
