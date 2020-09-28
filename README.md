@@ -8,7 +8,7 @@ FLAWLESS RAYCASTING! BY THE POWER OF MATH!
 
 ![Demo](demo_assets/raycastingDark2.gif)
 
-If you want to try this for yourself, download the repo and run "MenuFramework.exe" (i forgot to change the name)
+If you want to try this for yourself, download the latest release and run the executable.
 Then just use your mouse or trackpad to move the raycaster object around on the screen. The walls are randomly generated at runtime. You can press P to regenerate them (although the blue square may get stuck inside one)
 
 Here you can see the exact line-intersect geometry code that the raycaster now uses. It took me a while to set this up and I still don't fully understand it really. I borrowed this from here https://stackoverflow.com/a/1968345
@@ -30,3 +30,5 @@ Raycasting but with a larger gap between point checks. Results in some rays pene
 And raycasting with a smaller gap between point checks.
 
 ![Demo](demo_assets/raycasting3.gif)
+
+Build: include SDL2 and SDL2_ttf header files, link to SDL2.lib, SDL2main.lib, SDL2_ttf.lib (also provide SDL2.dll, SDL2_ttf.dll, zlib1.dll, and libfreetype-6.dll with the executable)
